@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lottie Animáció Hanggal</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6fb;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .main-btn {
+            padding: 18px 40px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 16px rgba(102,126,234,0.15);
+            transition: background 0.2s, transform 0.2s;
+        }
+        .main-btn:active {
+            transform: scale(0.97);
+        }
+        /* Modal */
+        .modal-bg {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.10);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+            padding: 0;
+            min-width: 0;
+            max-width: 95vw;
+            width: 360px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            overflow: hidden;
+        }
+        .modal-header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 24px 0 24px;
+            box-sizing: border-box;
+            background: transparent;
+            z-index: 2;
+        }
+        .modal-title {
+            font-size: 1.15em;
+            font-weight: 600;
+            color: #222;
+            letter-spacing: -0.5px;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            color: #888;
+            cursor: pointer;
+            margin-left: 12px;
+        }
+        .modal-spacer {
+            height: 28px;
+            width: 100%;
+            display: block;
+        }
+        .animation-container {
+            width: 100%;
+            height: 400px;
+            background: none;
+            border-radius: 0;
+            overflow: hidden;
+            margin: 0;
+            display: flex;
+            align-items: stretch;
+            justify-content: stretch;
+            border: none;
+            padding: 0;
+            position: relative;
+        }
+        #lottie-animation {
+            width: 100%;
+            height: 100%;
+            background: none;
+            display: block;
+        }
+        .modal-controls {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            align-items: center;
+            margin: 24px 0 24px 0;
+            padding: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .circle-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #f4f6fb;
+            border: 2px solid #e0e4ef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6em;
+            color: #667eea;
+            cursor: pointer;
+            transition: background 0.2s, border 0.2s;
+            outline: none;
+            position: relative;
+            overflow: hidden;
+        }
+        .circle-btn:active {
+            background: #e0e4ef;
+            border-color: #667eea;
+        }
+        .circle-btn svg {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.15s;
+        }
+        .circle-btn svg.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .circle-btn svg.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        @media (max-width: 400px) {
+            .modal { width: 98vw; }
+            .animation-container { height: 50vw; }
+        }
+    </style>
+</head>
+<body>
+    <button class="main-btn" id="openModalBtn">Mit lát rólam a munkaadó?</button>
+    <div class="modal-bg" id="modalBg">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title">Mit lát rólam a munkaadó?</span>
+                <button class="modal-close" id="closeModal" aria-label="Bezárás">✕</button>
+            </div>
+            <div class="modal-spacer"></div>
+            <div class="animation-container">
+                <div id="lottie-animation"></div>
+            </div>
+            <div class="modal-controls" id="controls">
+                <button class="circle-btn" id="pauseBtn" aria-label="Szünet">
+                    <svg id="pauseIcon" class="show" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="14" cy="14" r="13" stroke="#667eea" stroke-width="2" fill="#fff"/>
+                        <rect x="9" y="9" width="3" height="10" rx="1.5" fill="#667eea"/>
+                        <rect x="16" y="9" width="3" height="10" rx="1.5" fill="#667eea"/>
+                    </svg>
+                    <svg id="playIcon" class="hide" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="14" cy="14" r="13" stroke="#667eea" stroke-width="2" fill="#fff"/>
+                        <polygon points="11,9 20,14 11,19" fill="#667eea"/>
+                    </svg>
+                </button>
+                <button class="circle-btn" id="muteBtn" aria-label="Némítás">
+                    <svg id="volumeIcon" class="show" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="14" cy="14" r="13" stroke="#667eea" stroke-width="2" fill="#fff"/>
+                        <polygon points="10,12 14,12 17,9 17,19 14,16 10,16" fill="#667eea"/>
+                    </svg>
+                    <svg id="muteIcon" class="hide" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="14" cy="14" r="13" stroke="#667eea" stroke-width="2" fill="#fff"/>
+                        <polygon points="10,12 14,12 17,9 17,19 14,16 10,16" fill="#667eea"/>
+                        <line x1="9" y1="9" x2="19" y2="19" stroke="#f44336" stroke-width="2"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-controls" id="replayControls" style="display:none;">
+                <button class="circle-btn" id="replayBtn" aria-label="Újra lejátszom">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="14" cy="14" r="13" stroke="#667eea" stroke-width="2" fill="#fff"/>
+                        <path d="M19 17C18.1 18.25 16.65 19 15 19C12.24 19 10 16.76 10 14C10 11.24 12.24 9 15 9C16.65 9 18.1 9.75 19 11" stroke="#667eea" stroke-width="2" fill="none"/>
+                        <polygon points="19,8 19,12 21,10" fill="#667eea"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        let animation;
+        let audio;
+        let isPlaying = false;
+        let isPaused = false;
+        let isMuted = false;
+        let chillFadeOutStarted = false;
+        let chillMonitorInterval;
+        // Elemek
+        const openModalBtn = document.getElementById('openModalBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const muteBtn = document.getElementById('muteBtn');
+        const modalBg = document.getElementById('modalBg');
+        const closeModal = document.getElementById('closeModal');
+        const pauseIcon = document.getElementById('pauseIcon');
+        const playIcon = document.getElementById('playIcon');
+        const volumeIcon = document.getElementById('volumeIcon');
+        const muteIcon = document.getElementById('muteIcon');
+        const controls = document.getElementById('controls');
+        const replayControls = document.getElementById('replayControls');
+        const replayBtn = document.getElementById('replayBtn');
+        // Lottie animáció betöltése
+        animation = lottie.loadAnimation({
+            container: document.getElementById('lottie-animation'),
+            renderer: 'svg',
+            loop: false,
+            autoplay: false,
+            path: './Assets/mit-lat-anim (2).json'
+        });
+        // Audio betöltése
+        audio = new Audio('./Assets/ElevenLabs_2025-06-24T08_28_45_Liam_pre_sp100_s50_sb75_v3 (1).mp3');
+        audio.volume = 0.7;
+        // Chill zene
+        let chillAudio = new Audio('./Assets/Funk AF - Everet Almond.mp3');
+        chillAudio.volume = 0.25;
+        chillAudio.loop = false;
+
+        function fadeChillToLow(duration = 800) {
+            const startVolume = chillAudio.volume;
+            const targetVolume = 0.05;
+            const steps = 20;
+            let step = 0;
+            const fade = setInterval(() => {
+                step++;
+                chillAudio.volume = startVolume - (startVolume - targetVolume) * (step / steps);
+                if (step >= steps) {
+                    clearInterval(fade);
+                    chillAudio.volume = targetVolume;
+                }
+            }, duration / steps);
+        }
+
+        function stopChill() {
+            chillAudio.pause();
+            chillAudio.currentTime = 0;
+        }
+
+        function syncAnimationToAudio() {
+            if (audio.duration && !isNaN(audio.duration)) {
+                const offset = 1.5; // még nagyobb előrehozás
+                let current = audio.currentTime + offset;
+                if (current > audio.duration) current = audio.duration;
+                let progress = current / audio.duration;
+                if (progress > 1) progress = 1;
+                let frame = Math.floor(progress * animation.totalFrames);
+                if (frame > animation.totalFrames - 1) frame = animation.totalFrames - 1;
+                animation.goToAndStop(frame, true);
+            }
+        }
+        let animationSyncInterval;
+        // Modal megnyitás
+        function openModal() {
+            modalBg.style.display = 'flex';
+            animation.goToAndStop(0, true);
+            animation.play();
+            chillAudio.currentTime = 0;
+            chillAudio.volume = 0.25;
+            chillAudio.play();
+            if (!isPlaying) {
+                audio.currentTime = 0;
+                audio.muted = isMuted;
+                isPlaying = true;
+                isPaused = false;
+                showPause();
+                setTimeout(() => {
+                    fadeChillToLow();
+                    audio.play();
+                    animationSyncInterval = setInterval(syncAnimationToAudio, 20);
+                }, 1500);
+            }
+        }
+        // Modal bezárás
+        function closeModalFunc() {
+            modalBg.style.display = 'none';
+            audio.pause();
+            audio.currentTime = 0;
+            isPlaying = false;
+            isPaused = false;
+            clearInterval(animationSyncInterval);
+            chillAudio.pause();
+            chillAudio.currentTime = 0;
+        }
+        closeModal.addEventListener('click', closeModalFunc);
+        openModalBtn.addEventListener('click', openModal);
+        // Szünet gomb
+        pauseBtn.addEventListener('click', () => {
+            if (isPlaying && !isPaused) {
+                audio.pause();
+                isPaused = true;
+                clearInterval(animationSyncInterval);
+                animation.pause();
+                showPlay();
+            } else if (isPlaying && isPaused) {
+                audio.play();
+                isPaused = false;
+                animationSyncInterval = setInterval(syncAnimationToAudio, 20);
+                animation.play();
+                showPause();
+            }
+        });
+        // Némítás gomb
+        muteBtn.addEventListener('click', () => {
+            isMuted = !isMuted;
+            audio.muted = isMuted;
+            chillAudio.muted = isMuted;
+            if (isMuted) {
+                showMute();
+            } else {
+                showVolume();
+            }
+        });
+        // Ikonváltók
+        function showPause() {
+            pauseIcon.classList.add('show');
+            pauseIcon.classList.remove('hide');
+            playIcon.classList.add('hide');
+            playIcon.classList.remove('show');
+        }
+        function showPlay() {
+            pauseIcon.classList.add('hide');
+            pauseIcon.classList.remove('show');
+            playIcon.classList.add('show');
+            playIcon.classList.remove('hide');
+        }
+        function showMute() {
+            muteIcon.classList.add('show');
+            muteIcon.classList.remove('hide');
+            volumeIcon.classList.add('hide');
+            volumeIcon.classList.remove('show');
+        }
+        function showVolume() {
+            muteIcon.classList.add('hide');
+            muteIcon.classList.remove('show');
+            volumeIcon.classList.add('show');
+            volumeIcon.classList.remove('hide');
+        }
+        // Hang események
+        audio.addEventListener('play', () => {
+            animationSyncInterval = setInterval(syncAnimationToAudio, 20);
+            animation.play();
+            showPause();
+            chillFadeOutStarted = false;
+            chillMonitorInterval = setInterval(monitorChillFadeOut, 100);
+        });
+        audio.addEventListener('pause', () => {
+            clearInterval(animationSyncInterval);
+            animation.pause();
+            showPlay();
+            clearInterval(chillMonitorInterval);
+        });
+        audio.addEventListener('ended', () => {
+            isPlaying = false;
+            clearInterval(animationSyncInterval);
+            animation.pause();
+            syncAnimationToAudio();
+            showPlay();
+            controls.style.display = 'none';
+            replayControls.style.display = 'flex';
+            stopChill();
+            clearInterval(chillMonitorInterval);
+        });
+        replayBtn.addEventListener('click', () => {
+            audio.currentTime = 0;
+            isPlaying = true;
+            isPaused = false;
+            controls.style.display = 'flex';
+            replayControls.style.display = 'none';
+            animation.goToAndStop(0, true);
+            animation.play();
+            chillAudio.currentTime = 0;
+            chillAudio.volume = 0.25;
+            chillAudio.play();
+            setTimeout(() => {
+                fadeChillToLow();
+                audio.play();
+                animationSyncInterval = setInterval(syncAnimationToAudio, 20);
+            }, 1500);
+            showPause();
+        });
+        function monitorChillFadeOut() {
+            if (!audio.paused && audio.duration && !isNaN(audio.duration)) {
+                const timeLeft = audio.duration - audio.currentTime;
+                if (timeLeft <= 2 && !chillFadeOutStarted) {
+                    chillFadeOutStarted = true;
+                    fadeChillToZero();
+                }
+            }
+        }
+        function fadeChillToZero(duration = 1200) {
+            const startVolume = chillAudio.volume;
+            const targetVolume = 0.0;
+            const steps = 20;
+            let step = 0;
+            const fade = setInterval(() => {
+                step++;
+                chillAudio.volume = startVolume - (startVolume - targetVolume) * (step / steps);
+                if (step >= steps) {
+                    clearInterval(fade);
+                    chillAudio.volume = targetVolume;
+                }
+            }, duration / steps);
+        }
+    </script>
+</body>
+</html> 
