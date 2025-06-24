@@ -315,12 +315,14 @@
                 isPaused = true;
                 clearInterval(animationSyncInterval);
                 animation.pause();
+                chillAudio.pause();
                 showPlay();
             } else if (isPlaying && isPaused) {
                 audio.play();
                 isPaused = false;
                 animationSyncInterval = setInterval(syncAnimationToAudio, 20);
                 animation.play();
+                chillAudio.play();
                 showPause();
             }
         });
