@@ -212,6 +212,7 @@
         let isMuted = false;
         let chillFadeOutStarted = false;
         let chillMonitorInterval;
+        let chillTimeout;
         // Elemek
         const openModalBtn = document.getElementById('openModalBtn');
         const pauseBtn = document.getElementById('pauseBtn');
@@ -277,6 +278,8 @@
         // Modal megnyitás
         function openModal() {
             modalBg.style.display = 'flex';
+            controls.style.display = 'flex';
+            replayControls.style.display = 'none';
             animation.goToAndStop(0, true);
             animation.play();
             chillAudio.currentTime = 0;
@@ -288,7 +291,7 @@
                 isPlaying = true;
                 isPaused = false;
                 showPause();
-                setTimeout(() => {
+                chillTimeout = setTimeout(() => {
                     fadeChillToLow();
                     audio.play();
                     animationSyncInterval = setInterval(syncAnimationToAudio, 20);
@@ -305,6 +308,8 @@
             clearInterval(animationSyncInterval);
             chillAudio.pause();
             chillAudio.currentTime = 0;
+            clearTimeout(chillTimeout);
+            clearInterval(chillMonitorInterval);
         }
         closeModal.addEventListener('click', closeModalFunc);
         openModalBtn.addEventListener('click', openModal);
