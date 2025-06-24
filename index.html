@@ -4,33 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lottie Animáció Hanggal</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
     <style>
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f4f6fb;
+            font-family: 'Montserrat', Arial, sans-serif;
+            background: #fff;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
         }
-        .main-btn {
-            padding: 18px 40px;
-            border: none;
-            border-radius: 30px;
-            font-size: 1.2em;
-            font-weight: 600;
+        .main-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 320px;
+            height: auto;
+            background: linear-gradient(90deg, #f6fbfc 0%, #eaf6f9 100%);
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(102,126,234,0.08);
+            padding: 12px 12px;
             cursor: pointer;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            box-shadow: 0 4px 16px rgba(102,126,234,0.15);
-            transition: background 0.2s, transform 0.2s;
+            transition: box-shadow 0.2s, transform 0.2s;
+            border: none;
+            outline: none;
+            user-select: none;
         }
-        .main-btn:active {
-            transform: scale(0.97);
+        .main-card:active {
+            transform: scale(0.98);
+            box-shadow: 0 1px 4px rgba(102,126,234,0.10);
+        }
+        .main-card-label {
+            font-size: 0.98em;
+            font-weight: 700;
+            color: #2d3748;
+            letter-spacing: -0.2px;
+            font-family: 'Montserrat', Arial, sans-serif;
+        }
+        .main-card-play {
+            min-width: 48px;
+            height: 48px;
+            background: #fff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 4px rgba(102,126,234,0.06);
+            padding: 0 14px;
+        }
+        .main-card-play svg {
+            display: block;
         }
         /* Modal */
         .modal-bg {
@@ -61,16 +88,29 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 18px 24px 0 24px;
+            padding: 18px 24px 18px 24px;
             box-sizing: border-box;
             background: transparent;
             z-index: 2;
+            position: relative;
+        }
+        .modal-header::after {
+            content: "";
+            display: block;
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: 0 24px;
+            height: 1px;
+            background: #e9ecef;
         }
         .modal-title {
             font-size: 1.15em;
             font-weight: 600;
             color: #222;
             letter-spacing: -0.5px;
+            flex: 1 1 auto;
         }
         .modal-close {
             background: none;
@@ -79,11 +119,7 @@
             color: #888;
             cursor: pointer;
             margin-left: 12px;
-        }
-        .modal-spacer {
-            height: 28px;
-            width: 100%;
-            display: block;
+            align-self: flex-end;
         }
         .animation-container {
             width: 100%;
@@ -118,37 +154,37 @@
         .circle-btn {
             width: 48px;
             height: 48px;
-            border-radius: 50%;
-            background: #f4f6fb;
-            border: 2px solid #e0e4ef;
+            background: none;
+            border: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.6em;
-            color: #667eea;
             cursor: pointer;
-            transition: background 0.2s, border 0.2s;
             outline: none;
             position: relative;
             overflow: hidden;
         }
-        .circle-btn:active {
-            background: #e0e4ef;
-            border-color: #667eea;
+        .circle-btn span {
+            position: relative;
+            width: 36px;
+            height: 36px;
+            display: block;
         }
         .circle-btn svg {
+            width: 36px;
+            height: 36px;
+            display: block;
             position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
+            left: 0;
+            top: 0;
             transition: opacity 0.15s;
         }
         .circle-btn svg.hide {
-            opacity: 0;
+            opacity: 0 !important;
             pointer-events: none;
         }
         .circle-btn svg.show {
-            opacity: 1;
+            opacity: 1 !important;
             pointer-events: auto;
         }
         @media (max-width: 400px) {
@@ -158,47 +194,56 @@
     </style>
 </head>
 <body>
-    <button class="main-btn" id="openModalBtn">Mit lát rólam a munkaadó?</button>
+    <div class="main-card" id="openModalBtn">
+        <span class="main-card-label">Mit lát rólam a munkaadó?</span>
+        <span class="main-card-play">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M13.9998 1.16797C6.91218 1.16797 1.1665 6.91365 1.1665 14.0013C1.1665 21.089 6.91218 26.8346 13.9998 26.8346C21.0875 26.8346 26.8332 21.089 26.8332 14.0013C26.8332 6.91365 21.0875 1.16797 13.9998 1.16797ZM11.1995 9.47007C11.0832 9.6255 11.0832 9.90391 11.0832 10.4607V17.5416C11.0832 18.0985 11.0832 18.3769 11.1995 18.5323C11.3009 18.6678 11.4562 18.7525 11.6249 18.7646C11.8186 18.7784 12.0528 18.6279 12.5212 18.3267L18.0286 14.7863C18.435 14.525 18.6382 14.3944 18.7084 14.2282C18.7698 14.0831 18.7698 13.9193 18.7084 13.7741C18.6382 13.608 18.435 13.4774 18.0286 13.2161L12.5212 9.67565C12.0528 9.37453 11.8186 9.22398 11.6249 9.23781C11.4562 9.24987 11.3009 9.33461 11.1995 9.47007Z" fill="url(#paint0_linear_1228_13523)"/>
+                <defs>
+                <linearGradient id="paint0_linear_1228_13523" x1="1.1665" y1="26.8346" x2="31.5518" y2="18.6185" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#12A0ED"/>
+                <stop offset="1" stop-color="#2FD0B2"/>
+                </linearGradient>
+                </defs>
+            </svg>
+        </span>
+    </div>
     <div class="modal-bg" id="modalBg">
         <div class="modal">
             <div class="modal-header">
                 <span class="modal-title">Mit lát rólam a munkaadó?</span>
                 <button class="modal-close" id="closeModal" aria-label="Bezárás">✕</button>
             </div>
-            <div class="modal-spacer"></div>
             <div class="animation-container">
                 <div id="lottie-animation"></div>
             </div>
             <div class="modal-controls" id="controls">
                 <button class="circle-btn" id="pauseBtn" aria-label="Szünet">
-                    <svg id="pauseIcon" class="show" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="14" cy="14" r="13" stroke="#667eea" stroke-width="2" fill="#fff"/>
-                        <rect x="9" y="9" width="3" height="10" rx="1.5" fill="#667eea"/>
-                        <rect x="16" y="9" width="3" height="10" rx="1.5" fill="#667eea"/>
-                    </svg>
-                    <svg id="playIcon" class="hide" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="14" cy="14" r="13" stroke="#667eea" stroke-width="2" fill="#fff"/>
-                        <polygon points="11,9 20,14 11,19" fill="#667eea"/>
-                    </svg>
+                    <span id="iconPausePlay">
+                        <svg id="pauseSvg" class="show" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M14.6667 22.0013V14.0013M21.3334 22.0013V14.0013M31.3334 18.0013C31.3334 25.3651 25.3639 31.3346 18.0001 31.3346C10.6363 31.3346 4.66675 25.3651 4.66675 18.0013C4.66675 10.6375 10.6363 4.66797 18.0001 4.66797C25.3639 4.66797 31.3334 10.6375 31.3334 18.0013Z" stroke="#5262AD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <svg id="playSvg" class="hide" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18.0001 31.3346C25.3639 31.3346 31.3334 25.3651 31.3334 18.0013C31.3334 10.6375 25.3639 4.66797 18.0001 4.66797C10.6363 4.66797 4.66675 10.6375 4.66675 18.0013C4.66675 25.3651 10.6363 31.3346 18.0001 31.3346Z" stroke="#5262AD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M14.6667 13.9551C14.6667 13.3187 14.6667 13.0005 14.7997 12.8229C14.9156 12.6681 15.093 12.5712 15.2859 12.5574C15.5073 12.5416 15.7749 12.7137 16.3102 13.0578L22.6043 17.104C23.0689 17.4027 23.3011 17.552 23.3813 17.7418C23.4514 17.9077 23.4514 18.0949 23.3813 18.2608C23.3011 18.4506 23.0689 18.5999 22.6043 18.8986L16.3102 22.9448C15.7749 23.2889 15.5073 23.461 15.2859 23.4452C15.093 23.4314 14.9156 23.3345 14.7997 23.1797C14.6667 23.0021 14.6667 22.6839 14.6667 22.0475V13.9551Z" stroke="#5262AD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
                 </button>
                 <button class="circle-btn" id="muteBtn" aria-label="Némítás">
-                    <svg id="volumeIcon" class="show" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="14" cy="14" r="13" stroke="#667eea" stroke-width="2" fill="#fff"/>
-                        <polygon points="10,12 14,12 17,9 17,19 14,16 10,16" fill="#667eea"/>
-                    </svg>
-                    <svg id="muteIcon" class="hide" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="14" cy="14" r="13" stroke="#667eea" stroke-width="2" fill="#fff"/>
-                        <polygon points="10,12 14,12 17,9 17,19 14,16 10,16" fill="#667eea"/>
-                        <line x1="9" y1="9" x2="19" y2="19" stroke="#f44336" stroke-width="2"/>
-                    </svg>
+                    <span id="iconMuteVolume">
+                        <svg id="volumeSvg" class="show" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M31.3334 13.9986L23.3334 21.9986M23.3334 13.9986L31.3334 21.9986M14.8458 7.81951L10.6249 12.0404C10.3943 12.271 10.279 12.3863 10.1445 12.4688C10.0252 12.5419 9.89511 12.5958 9.75906 12.6284C9.60561 12.6653 9.44255 12.6653 9.11643 12.6653H6.80008C6.05334 12.6653 5.67998 12.6653 5.39476 12.8106C5.14388 12.9384 4.9399 13.1424 4.81207 13.3933C4.66675 13.6785 4.66675 14.0519 4.66675 14.7986V21.1986C4.66675 21.9453 4.66675 22.3187 4.81207 22.6039C4.9399 22.8548 5.14388 23.0588 5.39476 23.1866C5.67998 23.3319 6.05334 23.3319 6.80008 23.3319H9.11643C9.44255 23.3319 9.60561 23.3319 9.75906 23.3688C9.89511 23.4014 10.0252 23.4553 10.1445 23.5284C10.279 23.6109 10.3943 23.7262 10.6249 23.9568L14.8458 28.1777C15.417 28.7489 15.7026 29.0344 15.9478 29.0537C16.1605 29.0705 16.3684 28.9844 16.507 28.8221C16.6667 28.6351 16.6667 28.2312 16.6667 27.4234V8.57376C16.6667 7.76601 16.6667 7.36213 16.507 7.17511C16.3684 7.01284 16.1605 6.92672 15.9478 6.94346C15.7026 6.96276 15.417 7.24835 14.8458 7.81951Z" stroke="#5262AD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <svg id="muteSvg" class="hide" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M28.3306 8.66527C30.2204 11.2923 31.3334 14.5154 31.3334 17.9986C31.3334 21.4818 30.2204 24.705 28.3306 27.3319M22.9938 12.6653C24.0483 14.177 24.6667 16.0156 24.6667 17.9986C24.6667 19.9816 24.0483 21.8202 22.9938 23.3319M14.8458 7.81951L10.6249 12.0404C10.3943 12.271 10.279 12.3863 10.1445 12.4688C10.0252 12.5419 9.89511 12.5958 9.75906 12.6284C9.60561 12.6653 9.44255 12.6653 9.11643 12.6653H6.80008C6.05334 12.6653 5.67998 12.6653 5.39476 12.8106C5.14388 12.9384 4.9399 13.1424 4.81207 13.3933C4.66675 13.6785 4.66675 14.0519 4.66675 14.7986V21.1986C4.66675 21.9453 4.66675 22.3187 4.81207 22.6039C4.9399 22.8548 5.14388 23.0588 5.39476 23.1866C5.67998 23.3319 6.05334 23.3319 6.80008 23.3319H9.11643C9.44255 23.3319 9.60561 23.3319 9.75906 23.3688C9.89511 23.4014 10.0252 23.4553 10.1445 23.5284C10.279 23.6109 10.3943 23.7262 10.6249 23.9568L14.8458 28.1777C15.417 28.7489 15.7026 29.0344 15.9478 29.0537C16.1605 29.0705 16.3684 28.9844 16.507 28.8221C16.6667 28.6351 16.6667 28.2312 16.6667 27.4234V8.57376C16.6667 7.76601 16.6667 7.36213 16.507 7.17511C16.3684 7.01284 16.1605 6.92672 15.9478 6.94346C15.7026 6.96276 15.417 7.24835 14.8458 7.81951Z" stroke="#5262AD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
                 </button>
             </div>
             <div class="modal-controls" id="replayControls" style="display:none;">
                 <button class="circle-btn" id="replayBtn" aria-label="Újra lejátszom">
-                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="14" cy="14" r="13" stroke="#667eea" stroke-width="2" fill="#fff"/>
-                        <path d="M19 17C18.1 18.25 16.65 19 15 19C12.24 19 10 16.76 10 14C10 11.24 12.24 9 15 9C16.65 9 18.1 9.75 19 11" stroke="#667eea" stroke-width="2" fill="none"/>
-                        <polygon points="19,8 19,12 21,10" fill="#667eea"/>
+                    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M29.2706 19.1902C28.9001 22.6701 26.9284 25.9311 23.6658 27.8148C18.2451 30.9444 11.3138 29.0871 8.18416 23.6665L7.85083 23.0891M6.72809 16.8089C7.09849 13.329 9.07021 10.068 12.3329 8.18433C17.7535 5.05472 24.6849 6.91197 27.8145 12.3326L28.1478 12.91M6.65747 26.0876L7.63354 22.4449L11.2763 23.4209M24.7231 12.5782L28.3658 13.5543L29.3419 9.91152" stroke="#5262AD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </button>
             </div>
@@ -237,10 +282,12 @@
         // Audio betöltése
         audio = new Audio('./Assets/ElevenLabs_2025-06-24T08_28_45_Liam_pre_sp100_s50_sb75_v3 (1).mp3');
         audio.volume = 0.7;
+        audio.muted = false;
         // Chill zene
         let chillAudio = new Audio('./Assets/Funk AF - Everet Almond.mp3');
         chillAudio.volume = 0.25;
         chillAudio.loop = false;
+        chillAudio.muted = false;
 
         function fadeChillToLow(duration = 800) {
             const startVolume = chillAudio.volume;
@@ -285,6 +332,11 @@
             chillAudio.currentTime = 0;
             chillAudio.volume = 0.25;
             chillAudio.play();
+            if (isMuted) {
+                showMute();
+            } else {
+                showVolume();
+            }
             if (!isPlaying) {
                 audio.currentTime = 0;
                 audio.muted = isMuted;
@@ -344,28 +396,28 @@
         });
         // Ikonváltók
         function showPause() {
-            pauseIcon.classList.add('show');
-            pauseIcon.classList.remove('hide');
-            playIcon.classList.add('hide');
-            playIcon.classList.remove('show');
+            document.getElementById('pauseSvg').classList.add('show');
+            document.getElementById('pauseSvg').classList.remove('hide');
+            document.getElementById('playSvg').classList.add('hide');
+            document.getElementById('playSvg').classList.remove('show');
         }
         function showPlay() {
-            pauseIcon.classList.add('hide');
-            pauseIcon.classList.remove('show');
-            playIcon.classList.add('show');
-            playIcon.classList.remove('hide');
+            document.getElementById('pauseSvg').classList.add('hide');
+            document.getElementById('pauseSvg').classList.remove('show');
+            document.getElementById('playSvg').classList.add('show');
+            document.getElementById('playSvg').classList.remove('hide');
         }
         function showMute() {
-            muteIcon.classList.add('show');
-            muteIcon.classList.remove('hide');
-            volumeIcon.classList.add('hide');
-            volumeIcon.classList.remove('show');
+            document.getElementById('muteSvg').classList.add('show');
+            document.getElementById('muteSvg').classList.remove('hide');
+            document.getElementById('volumeSvg').classList.add('hide');
+            document.getElementById('volumeSvg').classList.remove('show');
         }
         function showVolume() {
-            muteIcon.classList.add('hide');
-            muteIcon.classList.remove('show');
-            volumeIcon.classList.add('show');
-            volumeIcon.classList.remove('hide');
+            document.getElementById('muteSvg').classList.add('hide');
+            document.getElementById('muteSvg').classList.remove('show');
+            document.getElementById('volumeSvg').classList.add('show');
+            document.getElementById('volumeSvg').classList.remove('hide');
         }
         // Hang események
         audio.addEventListener('play', () => {
