@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lottie Animáció Hanggal</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', Arial, sans-serif;
+            background: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        /* Language Switcher */
+        .language-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+            z-index: 100;
+        }
+        
+        .lang-btn {
+            padding: 8px 16px;
+            background: #f6fbfc;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            color: #666;
+            transition: all 0.2s;
+        }
+        
+        .lang-btn.active {
+            background: linear-gradient(90deg, #12A0ED 0%, #2FD0B2 100%);
+            border-color: #12A0ED;
+            color: white;
+        }
+        
+        .lang-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(102,126,234,0.15);
+        }
+        
+        .main-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 320px;
+            height: auto;
+            background: linear-gradient(90deg, #f6fbfc 0%, #eaf6f9 100%);
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(102,126,234,0.08);
+            padding: 12px 12px;
+            cursor: pointer;
+            transition: box-shadow 0.2s, transform 0.2s;
+            border: none;
+            outline: none;
+            user-select: none;
+        }
+        .main-card:active {
+            transform: scale(0.98);
+            box-shadow: 0 1px 4px rgba(102,126,234,0.10);
+        }
+        .main-card-label {
+            font-size: 0.98em;
+            font-weight: 700;
+            color: #2d3748;
+            letter-spacing: -0.2px;
+            font-family: 'Montserrat', Arial, sans-serif;
+        }
+        .main-card-play {
+            min-width: 48px;
+            height: 48px;
+            background: #fff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 4px rgba(102,126,234,0.06);
+            padding: 0 14px;
+        }
+        .main-card-play svg {
+            display: block;
+        }
+        /* Modal */
+        .modal-bg {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.10);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+            padding: 0;
+            min-width: 0;
+            max-width: 114vw;
+            width: 432px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            overflow: hidden;
+        }
+        .modal-header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 24px 18px 24px;
+            box-sizing: border-box;
+            background: transparent;
+            z-index: 2;
+            position: relative;
+        }
+        .modal-header::after {
+            content: "";
+            display: block;
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: 0 24px;
+            height: 1px;
+            background: #e9ecef;
+        }
+        .modal-title {
+            font-size: 1.15em;
+            font-weight: 600;
+            color: #222;
+            letter-spacing: -0.5px;
+            flex: 1 1 auto;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            color: #888;
+            cursor: pointer;
+            margin-left: 12px;
+            align-self: flex-end;
+        }
+        .animation-container {
+            width: 120%;
+            height: 480px;
+            background: none;
+            border-radius: 0;
+            overflow: hidden;
+            margin: 0 auto;
+            margin-left: -10%;
+            display: flex;
+            align-items: stretch;
+            justify-content: stretch;
+            border: none;
+            padding: 0;
+            position: relative;
+        }
+        #lottie-animation {
+            width: 120%;
+            height: 100%;
+            background: none;
+            display: block;
+        }
+        .modal-controls {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            align-items: center;
+            margin: 24px 0 24px 0;
+            padding: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .circle-btn {
+            width: 48px;
+            height: 48px;
+            background: none;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            outline: none;
+            position: relative;
+            overflow: hidden;
+        }
+        .circle-btn span {
+            position: relative;
+            width: 36px;
+            height: 36px;
+            display: block;
+        }
+        .circle-btn svg {
+            width: 36px;
+            height: 36px;
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 0;
+            transition: opacity 0.15s;
+        }
+        .circle-btn svg.hide {
+            opacity: 0 !important;
+            pointer-events: none;
+        }
+        .circle-btn svg.show {
+            opacity: 1 !important;
+            pointer-events: auto;
+        }
+        @media (max-width: 400px) {
+            .modal { width: 98vw; }
+            .animation-container { height: 50vw; }
+            .language-switcher {
+                top: 10px;
+                right: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="lang-btn active" id="langHu">HU</button>
+        <button class="lang-btn" id="langEn">EN</button>
+    </div>
+
+    <div class="main-card" id="openModalBtn">
+        <span class="main-card-label" data-hu="Mit lát rólam a munkaadó?" data-en="What does the employer see?">Mit lát rólam a munkaadó?</span>
+        <span class="main-card-play">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M13.9998 1.16797C6.91218 1.16797 1.1665 6.91365 1.1665 14.0013C1.1665 21.089 6.91218 26.8346 13.9998 26.8346C21.0875 26.8346 26.8332 21.089 26.8332 14.0013C26.8332 6.91365 21.0875 1.16797 13.9998 1.16797ZM11.1995 9.47007C11.0832 9.6255 11.0832 9.90391 11.0832 10.4607V17.5416C11.0832 18.0985 11.0832 18.3769 11.1995 18.5323C11.3009 18.6678 11.4562 18.7525 11.6249 18.7646C11.8186 18.7784 12.0528 18.6279 12.5212 18.3267L18.0286 14.7863C18.435 14.525 18.6382 14.3944 18.7084 14.2282C18.7698 14.0831 18.7698 13.9193 18.7084 13.7741C18.6382 13.608 18.435 13.4774 18.0286 13.2161L12.5212 9.67565C12.0528 9.37453 11.8186 9.22398 11.6249 9.23781C11.4562 9.24987 11.3009 9.33461 11.1995 9.47007Z" fill="url(#paint0_linear_1228_13523)"/>
+                <defs>
+                <linearGradient id="paint0_linear_1228_13523" x1="1.1665" y1="26.8346" x2="31.5518" y2="18.6185" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#12A0ED"/>
+                <stop offset="1" stop-color="#2FD0B2"/>
+                </linearGradient>
+                </defs>
+            </svg>
+        </span>
+    </div>
+    <div class="modal-bg" id="modalBg">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title" data-hu="Mit lát rólam a munkaadó?" data-en="What does the employer see?">Mit lát rólam a munkaadó?</span>
+                <button class="modal-close" id="closeModal" aria-label="Bezárás">✕</button>
+            </div>
+            <div class="animation-container">
+                <div id="lottie-animation"></div>
+            </div>
+            <div class="modal-controls" id="controls">
+                <button class="circle-btn" id="pauseBtn" data-hu="Szünet" data-en="Pause" aria-label="Szünet">
+                    <span id="iconPausePlay">
+                        <svg id="pauseSvg" class="show" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M14.6667 22.0013V14.0013M21.3334 22.0013V14.0013M31.3334 18.0013C31.3334 25.3651 25.3639 31.3346 18.0001 31.3346C10.6363 31.3346 4.66675 25.3651 4.66675 18.0013C4.66675 10.6375 10.6363 4.66797 18.0001 4.66797C25.3639 4.66797 31.3334 10.6375 31.3334 18.0013Z" stroke="#5262AD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <svg id="playSvg" class="hide" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18.0001 31.3346C25.3639 31.3346 31.3334 25.3651 31.3334 18.0013C31.3334 10.6375 25.3639 4.66797 18.0001 4.66797C10.6363 4.66797 4.66675 10.6375 4.66675 18.0013C4.66675 25.3651 10.6363 31.3346 18.0001 31.3346Z" stroke="#5262AD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M14.6667 13.9551C14.6667 13.3187 14.6667 13.0005 14.7997 12.8229C14.9156 12.6681 15.093 12.5712 15.2859 12.5574C15.5073 12.5416 15.7749 12.7137 16.3102 13.0578L22.6043 17.104C23.0689 17.4027 23.3011 17.552 23.3813 17.7418C23.4514 17.9077 23.4514 18.0949 23.3813 18.2608C23.3011 18.4506 23.0689 18.5999 22.6043 18.8986L16.3102 22.9448C15.7749 23.2889 15.5073 23.461 15.2859 23.4452C15.093 23.4314 14.9156 23.3345 14.7997 23.1797C14.6667 23.0021 14.6667 22.6839 14.6667 22.0475V13.9551Z" stroke="#5262AD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                </button>
+                <button class="circle-btn" id="muteBtn" data-hu="Némítás" data-en="Mute" aria-label="Némítás">
+                    <span id="iconMuteVolume">
+                        <svg id="volumeSvg" class="show" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M31.3334 13.9986L23.3334 21.9986M23.3334 13.9986L31.3334 21.9986M14.8458 7.81951L10.6249 12.0404C10.3943 12.271 10.279 12.3863 10.1445 12.4688C10.0252 12.5419 9.89511 12.5958 9.75906 12.6284C9.60561 12.6653 9.44255 12.6653 9.11643 12.6653H6.80008C6.05334 12.6653 5.67998 12.6653 5.39476 12.8106C5.14388 12.9384 4.9399 13.1424 4.81207 13.3933C4.66675 13.6785 4.66675 14.0519 4.66675 14.7986V21.1986C4.66675 21.9453 4.66675 22.3187 4.81207 22.6039C4.9399 22.8548 5.14388 23.0588 5.39476 23.1866C5.67998 23.3319 6.05334 23.3319 6.80008 23.3319H9.11643C9.44255 23.3319 9.60561 23.3319 9.75906 23.3688C9.89511 23.4014 10.0252 23.4553 10.1445 23.5284C10.279 23.6109 10.3943 23.7262 10.6249 23.9568L14.8458 28.1777C15.417 28.7489 15.7026 29.0344 15.9478 29.0537C16.1605 29.0705 16.3684 28.9844 16.507 28.8221C16.6667 28.6351 16.6667 28.2312 16.6667 27.4234V8.57376C16.6667 7.76601 16.6667 7.36213 16.507 7.17511C16.3684 7.01284 16.1605 6.92672 15.9478 6.94346C15.7026 6.96276 15.417 7.24835 14.8458 7.81951Z" stroke="#5262AD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <svg id="muteSvg" class="hide" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M28.3306 8.66527C30.2204 11.2923 31.3334 14.5154 31.3334 17.9986C31.3334 21.4818 30.2204 24.705 28.3306 27.3319M22.9938 12.6653C24.0483 14.177 24.6667 16.0156 24.6667 17.9986C24.6667 19.9816 24.0483 21.8202 22.9938 23.3319M14.8458 7.81951L10.6249 12.0404C10.3943 12.271 10.279 12.3863 10.1445 12.4688C10.0252 12.5419 9.89511 12.5958 9.75906 12.6284C9.60561 12.6653 9.44255 12.6653 9.11643 12.6653H6.80008C6.05334 12.6653 5.67998 12.6653 5.39476 12.8106C5.14388 12.9384 4.9399 13.1424 4.81207 13.3933C4.66675 13.6785 4.66675 14.0519 4.66675 14.7986V21.1986C4.66675 21.9453 4.66675 22.3187 4.81207 22.6039C4.9399 22.8548 5.14388 23.0588 5.39476 23.1866C5.67998 23.3319 6.05334 23.3319 6.80008 23.3319H9.11643C9.44255 23.3319 9.60561 23.3319 9.75906 23.3688C9.89511 23.4014 10.0252 23.4553 10.1445 23.5284C10.279 23.6109 10.3943 23.7262 10.6249 23.9568L14.8458 28.1777C15.417 28.7489 15.7026 29.0344 15.9478 29.0537C16.1605 29.0705 16.3684 28.9844 16.507 28.8221C16.6667 28.6351 16.6667 28.2312 16.6667 27.4234V8.57376C16.6667 7.76601 16.6667 7.36213 16.507 7.17511C16.3684 7.01284 16.1605 6.92672 15.9478 6.94346C15.7026 6.96276 15.417 7.24835 14.8458 7.81951Z" stroke="#5262AD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                </button>
+            </div>
+            <div class="modal-controls" id="replayControls" style="display:none;">
+                <button class="circle-btn" id="replayBtn" data-hu="Újra lejátszás" data-en="Replay" aria-label="Újra lejátszás">
+                    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M29.2706 19.1902C28.9001 22.6701 26.9284 25.9311 23.6658 27.8148C18.2451 30.9444 11.3138 29.0871 8.18416 23.6665L7.85083 23.0891M6.72809 16.8089C7.09849 13.329 9.07021 10.068 12.3329 8.18433C17.7535 5.05472 24.6849 6.91197 27.8145 12.3326L28.1478 12.91M6.65747 26.0876L7.63354 22.4449L11.2763 23.4209M24.7231 12.5782L28.3658 13.5543L29.3419 9.91152" stroke="#5262AD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        let animation;
+        let audio;
+        let isPlaying = false;
+        let isPaused = false;
+        let isMuted = false;
+        let chillFadeOutStarted = false;
+        let chillMonitorInterval;
+        let chillTimeout;
+        let currentLanguage = 'hu';
+        
+        // Audio files for different languages
+        const audioFiles = {
+            hu: './Assets/ElevenLabs_2025-06-24T08_28_45_Liam_pre_sp100_s50_sb75_v3 (1).mp3',
+            en: './Assets/eng-voice.mp3'
+        };
+        
+        // Elemek
+        const openModalBtn = document.getElementById('openModalBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const muteBtn = document.getElementById('muteBtn');
+        const modalBg = document.getElementById('modalBg');
+        const closeModal = document.getElementById('closeModal');
+        const pauseIcon = document.getElementById('pauseIcon');
+        const playIcon = document.getElementById('playIcon');
+        const volumeIcon = document.getElementById('volumeIcon');
+        const muteIcon = document.getElementById('muteIcon');
+        const controls = document.getElementById('controls');
+        const replayControls = document.getElementById('replayControls');
+        const replayBtn = document.getElementById('replayBtn');
+        const langHu = document.getElementById('langHu');
+        const langEn = document.getElementById('langEn');
+        
+        // Language switching
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            document.documentElement.lang = lang;
+            
+            // Update active language button
+            langHu.classList.toggle('active', lang === 'hu');
+            langEn.classList.toggle('active', lang === 'en');
+            
+            // Update all text elements (except buttons that should keep their icons)
+            const elements = document.querySelectorAll('[data-hu][data-en]');
+            elements.forEach(element => {
+                // Update text content for non-button elements
+                if (!element.classList.contains('circle-btn')) {
+                    element.textContent = element.getAttribute(`data-${lang}`);
+                }
+                // Update aria-label for all elements that have it
+                if (element.hasAttribute('aria-label')) {
+                    element.setAttribute('aria-label', element.getAttribute(`data-${lang}`));
+                }
+            });
+            
+            // Update close button aria-label separately
+            const closeBtn = document.getElementById('closeModal');
+            if (closeBtn) {
+                closeBtn.setAttribute('aria-label', lang === 'hu' ? 'Bezárás' : 'Close');
+            }
+            
+            // Update page title
+            document.title = lang === 'hu' ? 'Lottie Animáció Hanggal' : 'Lottie Animation with Audio';
+            
+            // Switch audio file immediately
+            const wasPlaying = audio && !audio.paused;
+            const currentTime = audio ? audio.currentTime : 0;
+            
+            if (audio) {
+                audio.pause();
+                audio.removeEventListener('canplaythrough', handleAudioReady);
+            }
+            
+            audio = new Audio(audioFiles[lang]);
+            audio.volume = 0.7;
+            audio.muted = isMuted;
+            
+            // Re-add all event listeners
+            setupAudioEventListeners();
+            
+            if (wasPlaying && isPlaying) {
+                audio.addEventListener('canplaythrough', handleAudioReady);
+                audio.load();
+            }
+        }
+        
+        function handleAudioReady() {
+            audio.removeEventListener('canplaythrough', handleAudioReady);
+            if (isPlaying && !isPaused) {
+                audio.play();
+            }
+        }
+        
+        function setupAudioEventListeners() {
+            audio.addEventListener('play', () => {
+                animationSyncInterval = setInterval(syncAnimationToAudio, 20);
+                animation.play();
+                showPause();
+                chillFadeOutStarted = false;
+                chillMonitorInterval = setInterval(monitorChillFadeOut, 100);
+            });
+            
+            audio.addEventListener('pause', () => {
+                clearInterval(animationSyncInterval);
+                animation.pause();
+                showPlay();
+                clearInterval(chillMonitorInterval);
+            });
+            
+            audio.addEventListener('ended', () => {
+                isPlaying = false;
+                clearInterval(animationSyncInterval);
+                animation.pause();
+                syncAnimationToAudio();
+                showPlay();
+                controls.style.display = 'none';
+                replayControls.style.display = 'flex';
+                stopChill();
+                clearInterval(chillMonitorInterval);
+            });
+        }
+        
+        // Language button event listeners
+        langHu.addEventListener('click', () => switchLanguage('hu'));
+        langEn.addEventListener('click', () => switchLanguage('en'));
+        
+        // Lottie animáció betöltése
+        animation = lottie.loadAnimation({
+            container: document.getElementById('lottie-animation'),
+            renderer: 'svg',
+            loop: false,
+            autoplay: false,
+            path: './Assets/mit-lat-anim (2).json'
+        });
+        
+        // Audio betöltése
+        audio = new Audio(audioFiles[currentLanguage]);
+        audio.volume = 0.7;
+        audio.muted = false;
+        
+        // Setup initial audio event listeners
+        setupAudioEventListeners();
+        
+        // Chill zene
+        let chillAudio = new Audio('./Assets/Funk AF - Everet Almond.mp3');
+        chillAudio.volume = 0.25;
+        chillAudio.loop = false;
+        chillAudio.muted = false;
+
+        function fadeChillToLow(duration = 800) {
+            const startVolume = chillAudio.volume;
+            const targetVolume = 0.05;
+            const steps = 20;
+            let step = 0;
+            const fade = setInterval(() => {
+                step++;
+                chillAudio.volume = startVolume - (startVolume - targetVolume) * (step / steps);
+                if (step >= steps) {
+                    clearInterval(fade);
+                    chillAudio.volume = targetVolume;
+                }
+            }, duration / steps);
+        }
+
+        function stopChill() {
+            chillAudio.pause();
+            chillAudio.currentTime = 0;
+        }
+
+        function syncAnimationToAudio() {
+            if (audio.duration && !isNaN(audio.duration)) {
+                const offset = 1.5; // még nagyobb előrehozás
+                let current = audio.currentTime + offset;
+                if (current > audio.duration) current = audio.duration;
+                let progress = current / audio.duration;
+                if (progress > 1) progress = 1;
+                let frame = Math.floor(progress * animation.totalFrames);
+                if (frame > animation.totalFrames - 1) frame = animation.totalFrames - 1;
+                animation.goToAndStop(frame, true);
+            }
+        }
+        let animationSyncInterval;
+        // Modal megnyitás
+        function openModal() {
+            modalBg.style.display = 'flex';
+            controls.style.display = 'flex';
+            replayControls.style.display = 'none';
+            animation.goToAndStop(0, true);
+            animation.play();
+            chillAudio.currentTime = 0;
+            chillAudio.volume = 0.25;
+            chillAudio.play();
+            if (isMuted) {
+                showMute();
+            } else {
+                showVolume();
+            }
+            if (!isPlaying) {
+                audio.currentTime = 0;
+                audio.muted = isMuted;
+                isPlaying = true;
+                isPaused = false;
+                showPause();
+                chillTimeout = setTimeout(() => {
+                    fadeChillToLow();
+                    audio.play();
+                    animationSyncInterval = setInterval(syncAnimationToAudio, 20);
+                }, 1500);
+            }
+        }
+        // Modal bezárás
+        function closeModalFunc() {
+            modalBg.style.display = 'none';
+            audio.pause();
+            audio.currentTime = 0;
+            isPlaying = false;
+            isPaused = false;
+            clearInterval(animationSyncInterval);
+            chillAudio.pause();
+            chillAudio.currentTime = 0;
+            clearTimeout(chillTimeout);
+            clearInterval(chillMonitorInterval);
+        }
+        closeModal.addEventListener('click', closeModalFunc);
+        openModalBtn.addEventListener('click', openModal);
+        // Szünet gomb
+        pauseBtn.addEventListener('click', () => {
+            if (isPlaying && !isPaused) {
+                audio.pause();
+                isPaused = true;
+                clearInterval(animationSyncInterval);
+                animation.pause();
+                chillAudio.pause();
+                showPlay();
+            } else if (isPlaying && isPaused) {
+                audio.play();
+                isPaused = false;
+                animationSyncInterval = setInterval(syncAnimationToAudio, 20);
+                animation.play();
+                chillAudio.play();
+                showPause();
+            }
+        });
+        // Némítás gomb
+        muteBtn.addEventListener('click', () => {
+            isMuted = !isMuted;
+            audio.muted = isMuted;
+            chillAudio.muted = isMuted;
+            if (isMuted) {
+                showMute();
+            } else {
+                showVolume();
+            }
+        });
+        // Ikonváltók
+        function showPause() {
+            document.getElementById('pauseSvg').classList.add('show');
+            document.getElementById('pauseSvg').classList.remove('hide');
+            document.getElementById('playSvg').classList.add('hide');
+            document.getElementById('playSvg').classList.remove('show');
+        }
+        function showPlay() {
+            document.getElementById('pauseSvg').classList.add('hide');
+            document.getElementById('pauseSvg').classList.remove('show');
+            document.getElementById('playSvg').classList.add('show');
+            document.getElementById('playSvg').classList.remove('hide');
+        }
+        function showMute() {
+            document.getElementById('muteSvg').classList.add('show');
+            document.getElementById('muteSvg').classList.remove('hide');
+            document.getElementById('volumeSvg').classList.add('hide');
+            document.getElementById('volumeSvg').classList.remove('show');
+        }
+        function showVolume() {
+            document.getElementById('muteSvg').classList.add('hide');
+            document.getElementById('muteSvg').classList.remove('show');
+            document.getElementById('volumeSvg').classList.add('show');
+            document.getElementById('volumeSvg').classList.remove('hide');
+        }
+        // Hang események már a setupAudioEventListeners() függvényben vannak beállítva
+        replayBtn.addEventListener('click', () => {
+            audio.currentTime = 0;
+            isPlaying = true;
+            isPaused = false;
+            controls.style.display = 'flex';
+            replayControls.style.display = 'none';
+            animation.goToAndStop(0, true);
+            animation.play();
+            chillAudio.currentTime = 0;
+            chillAudio.volume = 0.25;
+            chillAudio.play();
+            setTimeout(() => {
+                fadeChillToLow();
+                audio.play();
+                animationSyncInterval = setInterval(syncAnimationToAudio, 20);
+            }, 1500);
+            showPause();
+        });
+        function monitorChillFadeOut() {
+            if (!audio.paused && audio.duration && !isNaN(audio.duration)) {
+                const timeLeft = audio.duration - audio.currentTime;
+                if (timeLeft <= 2 && !chillFadeOutStarted) {
+                    chillFadeOutStarted = true;
+                    fadeChillToZero();
+                }
+            }
+        }
+        function fadeChillToZero(duration = 1200) {
+            const startVolume = chillAudio.volume;
+            const targetVolume = 0.0;
+            const steps = 20;
+            let step = 0;
+            const fade = setInterval(() => {
+                step++;
+                chillAudio.volume = startVolume - (startVolume - targetVolume) * (step / steps);
+                if (step >= steps) {
+                    clearInterval(fade);
+                    chillAudio.volume = targetVolume;
+                }
+            }, duration / steps);
+        }
+    </script>
+</body>
+</html> 
