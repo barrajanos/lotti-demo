@@ -307,10 +307,15 @@
         let chillTimeout;
         let currentLanguage = 'hu';
         
-        // Audio files for different languages
+        // Audio and animation files for different languages
         const audioFiles = {
             hu: './Assets/ElevenLabs_2025-06-24T08_28_45_Liam_pre_sp100_s50_sb75_v3 (1).mp3',
             en: './Assets/eng-voice.mp3'
+        };
+        
+        const animationFiles = {
+            hu: './Assets/hun-animation.json',
+            en: './Assets/eng-animation.json'
         };
         
         // Elemek
@@ -360,10 +365,20 @@
             // Update page title
             document.title = lang === 'hu' ? 'Lottie Animáció Hanggal' : 'Lottie Animation with Audio';
             
-            // Switch audio file immediately
+            // Switch audio and animation files immediately
             const wasPlaying = audio && !audio.paused;
             const currentTime = audio ? audio.currentTime : 0;
             
+            // Stop and reset current animation
+            if (animation) {
+                animation.pause();
+                clearInterval(animationSyncInterval);
+            }
+            
+            // Load new animation for the selected language
+            loadAnimation(lang);
+            
+            // Switch audio
             if (audio) {
                 audio.pause();
                 audio.removeEventListener('canplaythrough', handleAudioReady);
@@ -423,13 +438,21 @@
         langEn.addEventListener('click', () => switchLanguage('en'));
         
         // Lottie animáció betöltése
-        animation = lottie.loadAnimation({
-            container: document.getElementById('lottie-animation'),
-            renderer: 'svg',
-            loop: false,
-            autoplay: false,
-            path: './Assets/mit-lat-anim (2).json'
-        });
+        function loadAnimation(lang) {
+            if (animation) {
+                animation.destroy();
+            }
+            animation = lottie.loadAnimation({
+                container: document.getElementById('lottie-animation'),
+                renderer: 'svg',
+                loop: false,
+                autoplay: false,
+                path: animationFiles[lang]
+            });
+        }
+        
+        // Initial animation load
+        loadAnimation(currentLanguage);
         
         // Audio betöltése
         audio = new Audio(audioFiles[currentLanguage]);
