@@ -492,6 +492,28 @@
             chillAudio.currentTime = 0;
         }
 
+        function ensureChillStopped() {
+            // Biztosítjuk, hogy a háttérzene teljesen megáll
+            if (!chillAudio.paused) {
+                chillAudio.pause();
+            }
+            chillAudio.currentTime = 0;
+            clearTimeout(chillTimeout);
+            clearInterval(chillMonitorInterval);
+        }
+
+        function startChillSafely() {
+            // Biztonságos háttérzene indítás - duplikáció elkerülése
+            ensureChillStopped(); // Először megállítjuk az előzőt
+            chillAudio.currentTime = 0;
+            chillAudio.volume = 0.12;
+            chillAudio.play();
+            // Fade beállítása
+            chillTimeout = setTimeout(() => {
+                fadeChillToLow();
+            }, 200);
+        }
+
         function syncAnimationToAudio() {
             if (audio.duration && !isNaN(audio.duration)) {
                 const offset = 1.5; // még nagyobb előrehozás
@@ -512,10 +534,8 @@
             replayControls.style.display = 'none';
             animation.goToAndStop(0, true);
             animation.play();
-            // Background music plays normally - optimalizálva
-            chillAudio.currentTime = 0;
-            chillAudio.volume = 0.12; // Alacsonyabb kezdeti hangerő a simább lejátszásért
-            chillAudio.play();
+            // Háttérzene biztonságos indítása
+            startChillSafely();
             if (isMuted) {
                 showMute();
             } else {
@@ -527,11 +547,8 @@
                 isPlaying = true;
                 isPaused = false;
                 showPause();
-                // Immediate start for perfect sync
-                chillTimeout = setTimeout(() => {
-                    fadeChillToLow(); // Fade background music quickly
-                }, 200); // Fade háttérzene hamarabb
-                audio.play(); // Hang rögtön indul
+                // Hang rögtön indul - tökéletes szinkron
+                audio.play();
                 animationSyncInterval = setInterval(syncAnimationToAudio, 20);
                 
                 // Original version was 1500ms:
@@ -550,10 +567,7 @@
             isPlaying = false;
             isPaused = false;
             clearInterval(animationSyncInterval);
-            chillAudio.pause();
-            chillAudio.currentTime = 0;
-            clearTimeout(chillTimeout);
-            clearInterval(chillMonitorInterval);
+            ensureChillStopped(); // Komplett háttérzene megállítás
         }
         closeModal.addEventListener('click', closeModalFunc);
         openModalBtn.addEventListener('click', openModal);
@@ -620,16 +634,11 @@
             replayControls.style.display = 'none';
             animation.goToAndStop(0, true);
             animation.play();
-            // Background music plays normally - optimalizálva
-            chillAudio.currentTime = 0;
-            chillAudio.volume = 0.12; // Alacsonyabb kezdeti hangerő a simább lejátszásért
-            chillAudio.play();
+            // Háttérzene biztonságos indítása
+            startChillSafely();
             
-            // Immediate start for perfect sync
-            setTimeout(() => {
-                fadeChillToLow(); // Fade background music quickly
-            }, 200); // Fade háttérzene hamarabb
-            audio.play(); // Hang rögtön indul
+            // Hang rögtön indul - tökéletes szinkron
+            audio.play();
             animationSyncInterval = setInterval(syncAnimationToAudio, 20);
             showPause();
         });
