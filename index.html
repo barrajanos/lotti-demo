@@ -304,7 +304,7 @@
         let isMuted = false;
         let chillFadeOutStarted = false;
         let chillMonitorInterval;
-        let chillTimeout;
+        // let chillTimeout; // Not needed anymore - no delay used
         let currentLanguage = 'hu';
         
         // Audio and animation files for different languages
@@ -522,11 +522,17 @@
                 isPlaying = true;
                 isPaused = false;
                 showPause();
-                chillTimeout = setTimeout(() => {
-                    fadeChillToLow();
-                    audio.play();
-                    animationSyncInterval = setInterval(syncAnimationToAudio, 20);
-                }, 1500);
+                // Immediate start without delay
+                fadeChillToLow();
+                audio.play();
+                animationSyncInterval = setInterval(syncAnimationToAudio, 20);
+                
+                // Original delay version (commented out):
+                // chillTimeout = setTimeout(() => {
+                //     fadeChillToLow();
+                //     audio.play();
+                //     animationSyncInterval = setInterval(syncAnimationToAudio, 20);
+                // }, 1500);
             }
         }
         // Modal bezárás
@@ -539,7 +545,7 @@
             clearInterval(animationSyncInterval);
             chillAudio.pause();
             chillAudio.currentTime = 0;
-            clearTimeout(chillTimeout);
+            // clearTimeout(chillTimeout); // Not needed anymore - no timeout used
             clearInterval(chillMonitorInterval);
         }
         closeModal.addEventListener('click', closeModalFunc);
@@ -610,11 +616,17 @@
             chillAudio.currentTime = 0;
             chillAudio.volume = 0.25;
             chillAudio.play();
-            setTimeout(() => {
-                fadeChillToLow();
-                audio.play();
-                animationSyncInterval = setInterval(syncAnimationToAudio, 20);
-            }, 1500);
+            // Immediate start without delay
+            fadeChillToLow();
+            audio.play();
+            animationSyncInterval = setInterval(syncAnimationToAudio, 20);
+            
+            // Original delay version (commented out):
+            // setTimeout(() => {
+            //     fadeChillToLow();
+            //     audio.play();
+            //     animationSyncInterval = setInterval(syncAnimationToAudio, 20);
+            // }, 1500);
             showPause();
         });
         function monitorChillFadeOut() {
