@@ -508,9 +508,10 @@
             replayControls.style.display = 'none';
             animation.goToAndStop(0, true);
             animation.play();
-            chillAudio.currentTime = 0;
-            chillAudio.volume = 0.25;
-            chillAudio.play();
+            // Disable background music to prevent stuttering
+            // chillAudio.currentTime = 0;
+            // chillAudio.volume = 0.25;
+            // chillAudio.play();
             if (isMuted) {
                 showMute();
             } else {
@@ -522,12 +523,12 @@
                 isPlaying = true;
                 isPaused = false;
                 showPause();
-                // Short delay to prevent audio conflicts
+                // No delay needed without background music
                 chillTimeout = setTimeout(() => {
-                    fadeChillToLow();
+                    // fadeChillToLow(); // No background music to fade
                     audio.play();
                     animationSyncInterval = setInterval(syncAnimationToAudio, 20);
-                }, 500);
+                }, 100);
                 
                 // Original version was 1500ms:
                 // chillTimeout = setTimeout(() => {
@@ -545,8 +546,8 @@
             isPlaying = false;
             isPaused = false;
             clearInterval(animationSyncInterval);
-            chillAudio.pause();
-            chillAudio.currentTime = 0;
+            // chillAudio.pause();  // No background music
+            // chillAudio.currentTime = 0;
             clearTimeout(chillTimeout);
             clearInterval(chillMonitorInterval);
         }
@@ -615,25 +616,27 @@
             replayControls.style.display = 'none';
             animation.goToAndStop(0, true);
             animation.play();
-            chillAudio.currentTime = 0;
-            chillAudio.volume = 0.25;
-            chillAudio.play();
-            // Short delay to prevent audio conflicts
+            // Disable background music to prevent stuttering
+            // chillAudio.currentTime = 0;
+            // chillAudio.volume = 0.25;
+            // chillAudio.play();
+            // No delay needed without background music
             setTimeout(() => {
-                fadeChillToLow();
+                // fadeChillToLow(); // No background music to fade
                 audio.play();
                 animationSyncInterval = setInterval(syncAnimationToAudio, 20);
-            }, 500);
+            }, 100);
             showPause();
         });
         function monitorChillFadeOut() {
-            if (!audio.paused && audio.duration && !isNaN(audio.duration)) {
-                const timeLeft = audio.duration - audio.currentTime;
-                if (timeLeft <= 2 && !chillFadeOutStarted) {
-                    chillFadeOutStarted = true;
-                    fadeChillToZero();
-                }
-            }
+            // Background music disabled - no monitoring needed
+            // if (!audio.paused && audio.duration && !isNaN(audio.duration)) {
+            //     const timeLeft = audio.duration - audio.currentTime;
+            //     if (timeLeft <= 2 && !chillFadeOutStarted) {
+            //         chillFadeOutStarted = true;
+            //         fadeChillToZero();
+            //     }
+            // }
         }
         function fadeChillToZero(duration = 1200) {
             const startVolume = chillAudio.volume;
