@@ -468,10 +468,10 @@
         chillAudio.loop = false;
         chillAudio.muted = false;
 
-        function fadeChillToLow(duration = 400) {
+        function fadeChillToLow(duration = 600) {
             const startVolume = chillAudio.volume;
-            const targetVolume = 0.02; // Even lower volume
-            const steps = 15; // Fewer steps for faster fade
+            const targetVolume = 0.04; // Keeps playing quietly in background
+            const steps = 20;
             let step = 0;
             const fade = setInterval(() => {
                 step++;
@@ -479,11 +479,7 @@
                 if (step >= steps) {
                     clearInterval(fade);
                     chillAudio.volume = targetVolume;
-                    // Stop background music completely after fade
-                    setTimeout(() => {
-                        chillAudio.pause();
-                        chillAudio.currentTime = 0;
-                    }, 1000);
+                    // Background music continues playing at low volume
                 }
             }, duration / steps);
         }
@@ -513,16 +509,10 @@
             replayControls.style.display = 'none';
             animation.goToAndStop(0, true);
             animation.play();
-            // Short background music with quick fade
+            // Background music plays normally
             chillAudio.currentTime = 0;
-            chillAudio.volume = 0.15; // Lower volume to prevent conflicts
+            chillAudio.volume = 0.20; // Slightly higher volume for better ambiance
             chillAudio.play();
-            
-            // Stop background music after 4 seconds to prevent long playback
-            setTimeout(() => {
-                chillAudio.pause();
-                chillAudio.currentTime = 0;
-            }, 4000);
             if (isMuted) {
                 showMute();
             } else {
@@ -534,12 +524,12 @@
                 isPlaying = true;
                 isPaused = false;
                 showPause();
-                // Quick start with optimized background music
+                // Much quicker start for better sync
                 chillTimeout = setTimeout(() => {
                     fadeChillToLow(); // Fade background music quickly
                     audio.play();
                     animationSyncInterval = setInterval(syncAnimationToAudio, 20);
-                }, 800); // Shorter delay for better sync
+                }, 300); // Much shorter delay for immediate sync
                 
                 // Original version was 1500ms:
                 // chillTimeout = setTimeout(() => {
@@ -627,27 +617,20 @@
             replayControls.style.display = 'none';
             animation.goToAndStop(0, true);
             animation.play();
-            // Short background music with quick fade
+            // Background music plays normally
             chillAudio.currentTime = 0;
-            chillAudio.volume = 0.15; // Lower volume to prevent conflicts
+            chillAudio.volume = 0.20; // Slightly higher volume for better ambiance
             chillAudio.play();
             
-            // Stop background music after 4 seconds to prevent long playback
-            setTimeout(() => {
-                chillAudio.pause();
-                chillAudio.currentTime = 0;
-            }, 4000);
-            
-            // Quick start with optimized background music
+            // Much quicker start for better sync
             setTimeout(() => {
                 fadeChillToLow(); // Fade background music quickly
                 audio.play();
                 animationSyncInterval = setInterval(syncAnimationToAudio, 20);
-            }, 800); // Shorter delay for better sync
+            }, 300); // Much shorter delay for immediate sync
             showPause();
         });
         function monitorChillFadeOut() {
-            // No longer needed with 4-second background music limit
             if (!audio.paused && audio.duration && !isNaN(audio.duration)) {
                 const timeLeft = audio.duration - audio.currentTime;
                 if (timeLeft <= 2 && !chillFadeOutStarted) {
