@@ -306,6 +306,7 @@
         let chillMonitorInterval;
         let chillTimeout;
         let currentLanguage = 'hu';
+        let chillIsRunning = false; // Új biztonsági változó
         
         // Audio and animation files for different languages
         const audioFiles = {
@@ -364,6 +365,9 @@
             
             // Update page title
             document.title = lang === 'hu' ? 'Lottie Animáció Hanggal' : 'Lottie Animation with Audio';
+            
+            // FONTOS: Állítsuk meg a háttérzenét nyelvváltáskor is!
+            ensureChillStopped();
             
             // Switch audio and animation files immediately
             const wasPlaying = audio && !audio.paused;
@@ -468,6 +472,19 @@
         chillAudio.loop = false;
         chillAudio.muted = false;
         chillAudio.preload = 'auto'; // Teljes előtöltés az akadozás elkerüléséhez
+        
+        // Háttérzene események kezelése
+        chillAudio.addEventListener('ended', () => {
+            chillIsRunning = false; // Ha véget ért, jelöljük
+        });
+        
+        chillAudio.addEventListener('pause', () => {
+            // Ha pause-olva van, még mindig running lehet (resume-hoz)
+        });
+        
+        chillAudio.addEventListener('play', () => {
+            chillIsRunning = true; // Ha elindul, jelöljük
+        });
 
         function fadeChillToLow(duration = 800) {
             const startVolume = chillAudio.volume;
@@ -500,14 +517,25 @@
             chillAudio.currentTime = 0;
             clearTimeout(chillTimeout);
             clearInterval(chillMonitorInterval);
+            chillIsRunning = false; // Jelöljük, hogy megállt
         }
 
         function startChillSafely() {
             // Biztonságos háttérzene indítás - duplikáció elkerülése
-            ensureChillStopped(); // Először megállítjuk az előzőt
+            if (chillIsRunning && !chillAudio.paused) {
+                console.log('Háttérzene már fut és nem pause-ban van, nem indítunk újat!');
+                return; // Ne indítsunk újat ha már fut és játszik
+            }
+            
+            // Tiszta indítás - timeout-ok törlése
+            clearTimeout(chillTimeout);
+            clearInterval(chillMonitorInterval);
+            
             chillAudio.currentTime = 0;
             chillAudio.volume = 0.12;
             chillAudio.play();
+            chillIsRunning = true; // Jelöljük, hogy fut
+            
             // Fade beállítása
             chillTimeout = setTimeout(() => {
                 fadeChillToLow();
@@ -578,14 +606,17 @@
                 isPaused = true;
                 clearInterval(animationSyncInterval);
                 animation.pause();
-                chillAudio.pause();
+                chillAudio.pause(); // Csak pause, ne állítsuk meg teljesen
                 showPlay();
             } else if (isPlaying && isPaused) {
                 audio.play();
                 isPaused = false;
                 animationSyncInterval = setInterval(syncAnimationToAudio, 20);
                 animation.play();
-                chillAudio.play();
+                // Biztonságos folytatás - NE indítsunk új háttérzenét!
+                if (chillAudio.paused) {
+                    chillAudio.play(); // Csak folytatjuk, nem újraindítjuk
+                }
                 showPause();
             }
         });
