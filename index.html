@@ -462,26 +462,29 @@
         // Setup initial audio event listeners
         setupAudioEventListeners();
         
-        // Chill zene
+        // Chill zene - optimalizált
         let chillAudio = new Audio('./Assets/Funk AF - Everet Almond.mp3');
-        chillAudio.volume = 0.25;
+        chillAudio.volume = 0.15; // Alacsonyabb kezdeti hangerő
         chillAudio.loop = false;
         chillAudio.muted = false;
+        chillAudio.preload = 'auto'; // Teljes előtöltés az akadozás elkerüléséhez
 
-        function fadeChillToLow(duration = 600) {
+        function fadeChillToLow(duration = 800) {
             const startVolume = chillAudio.volume;
-            const targetVolume = 0.04; // Keeps playing quietly in background
-            const steps = 20;
+            const targetVolume = 0.03; // Még halkabb háttér
+            const steps = 40; // Több lépés a simább fade-ért
             let step = 0;
+            const stepSize = (startVolume - targetVolume) / steps;
+            const interval = duration / steps;
+            
             const fade = setInterval(() => {
                 step++;
-                chillAudio.volume = startVolume - (startVolume - targetVolume) * (step / steps);
-                if (step >= steps) {
+                chillAudio.volume = Math.max(startVolume - (stepSize * step), targetVolume);
+                if (step >= steps || chillAudio.volume <= targetVolume) {
                     clearInterval(fade);
                     chillAudio.volume = targetVolume;
-                    // Background music continues playing at low volume
                 }
-            }, duration / steps);
+            }, interval);
         }
 
         function stopChill() {
@@ -509,9 +512,9 @@
             replayControls.style.display = 'none';
             animation.goToAndStop(0, true);
             animation.play();
-            // Background music plays normally
+            // Background music plays normally - optimalizálva
             chillAudio.currentTime = 0;
-            chillAudio.volume = 0.20; // Slightly higher volume for better ambiance
+            chillAudio.volume = 0.12; // Alacsonyabb kezdeti hangerő a simább lejátszásért
             chillAudio.play();
             if (isMuted) {
                 showMute();
@@ -617,9 +620,9 @@
             replayControls.style.display = 'none';
             animation.goToAndStop(0, true);
             animation.play();
-            // Background music plays normally
+            // Background music plays normally - optimalizálva
             chillAudio.currentTime = 0;
-            chillAudio.volume = 0.20; // Slightly higher volume for better ambiance
+            chillAudio.volume = 0.12; // Alacsonyabb kezdeti hangerő a simább lejátszásért
             chillAudio.play();
             
             // Immediate start for perfect sync
@@ -639,19 +642,22 @@
                 }
             }
         }
-        function fadeChillToZero(duration = 1200) {
+        function fadeChillToZero(duration = 1000) {
             const startVolume = chillAudio.volume;
             const targetVolume = 0.0;
-            const steps = 20;
+            const steps = 50; // Simább fade ki
             let step = 0;
+            const stepSize = startVolume / steps;
+            const interval = duration / steps;
+            
             const fade = setInterval(() => {
                 step++;
-                chillAudio.volume = startVolume - (startVolume - targetVolume) * (step / steps);
-                if (step >= steps) {
+                chillAudio.volume = Math.max(startVolume - (stepSize * step), 0);
+                if (step >= steps || chillAudio.volume <= 0) {
                     clearInterval(fade);
-                    chillAudio.volume = targetVolume;
+                    chillAudio.volume = 0;
                 }
-            }, duration / steps);
+            }, interval);
         }
     </script>
 </body>
