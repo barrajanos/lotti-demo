@@ -524,12 +524,12 @@
                 isPlaying = true;
                 isPaused = false;
                 showPause();
-                // Much quicker start for better sync
+                // Immediate start for perfect sync
                 chillTimeout = setTimeout(() => {
                     fadeChillToLow(); // Fade background music quickly
-                    audio.play();
-                    animationSyncInterval = setInterval(syncAnimationToAudio, 20);
-                }, 300); // Much shorter delay for immediate sync
+                }, 200); // Fade háttérzene hamarabb
+                audio.play(); // Hang rögtön indul
+                animationSyncInterval = setInterval(syncAnimationToAudio, 20);
                 
                 // Original version was 1500ms:
                 // chillTimeout = setTimeout(() => {
@@ -622,12 +622,12 @@
             chillAudio.volume = 0.20; // Slightly higher volume for better ambiance
             chillAudio.play();
             
-            // Much quicker start for better sync
+            // Immediate start for perfect sync
             setTimeout(() => {
                 fadeChillToLow(); // Fade background music quickly
-                audio.play();
-                animationSyncInterval = setInterval(syncAnimationToAudio, 20);
-            }, 300); // Much shorter delay for immediate sync
+            }, 200); // Fade háttérzene hamarabb
+            audio.play(); // Hang rögtön indul
+            animationSyncInterval = setInterval(syncAnimationToAudio, 20);
             showPause();
         });
         function monitorChillFadeOut() {
