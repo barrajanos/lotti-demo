@@ -366,8 +366,8 @@
             // Update page title
             document.title = lang === 'hu' ? 'Lottie Animáció Hanggal' : 'Lottie Animation with Audio';
             
-            // FONTOS: Állítsuk meg a háttérzenét nyelvváltáskor is!
-            ensureChillStopped();
+            // HÁTTÉRZENE KIKAPCSOLVA - nincs mit megállítani
+            // ensureChillStopped();
             
             // Switch audio and animation files immediately
             const wasPlaying = audio && !audio.paused;
@@ -413,15 +413,16 @@
                 animationSyncInterval = setInterval(syncAnimationToAudio, 20);
                 animation.play();
                 showPause();
-                chillFadeOutStarted = false;
-                chillMonitorInterval = setInterval(monitorChillFadeOut, 100);
+                // HÁTTÉRZENE KIKAPCSOLVA
+                // chillFadeOutStarted = false;
+                // chillMonitorInterval = setInterval(monitorChillFadeOut, 100);
             });
             
             audio.addEventListener('pause', () => {
                 clearInterval(animationSyncInterval);
                 animation.pause();
                 showPlay();
-                clearInterval(chillMonitorInterval);
+                // clearInterval(chillMonitorInterval); // HÁTTÉRZENE KIKAPCSOLVA
             });
             
             audio.addEventListener('ended', () => {
@@ -432,8 +433,8 @@
                 showPlay();
                 controls.style.display = 'none';
                 replayControls.style.display = 'flex';
-                stopChill();
-                clearInterval(chillMonitorInterval);
+                // stopChill(); // HÁTTÉRZENE KIKAPCSOLVA
+                // clearInterval(chillMonitorInterval); // HÁTTÉRZENE KIKAPCSOLVA
             });
         }
         
@@ -562,8 +563,8 @@
             replayControls.style.display = 'none';
             animation.goToAndStop(0, true);
             animation.play();
-            // Háttérzene biztonságos indítása
-            startChillSafely();
+            // HÁTTÉRZENE KIKAPCSOLVA - csak a fő narráció
+            // startChillSafely(); // Kikommentezve
             if (isMuted) {
                 showMute();
             } else {
@@ -595,7 +596,7 @@
             isPlaying = false;
             isPaused = false;
             clearInterval(animationSyncInterval);
-            ensureChillStopped(); // Komplett háttérzene megállítás
+            // ensureChillStopped(); // HÁTTÉRZENE KIKAPCSOLVA
         }
         closeModal.addEventListener('click', closeModalFunc);
         openModalBtn.addEventListener('click', openModal);
@@ -606,17 +607,17 @@
                 isPaused = true;
                 clearInterval(animationSyncInterval);
                 animation.pause();
-                chillAudio.pause(); // Csak pause, ne állítsuk meg teljesen
+                // chillAudio.pause(); // HÁTTÉRZENE KIKAPCSOLVA
                 showPlay();
             } else if (isPlaying && isPaused) {
                 audio.play();
                 isPaused = false;
                 animationSyncInterval = setInterval(syncAnimationToAudio, 20);
                 animation.play();
-                // Biztonságos folytatás - NE indítsunk új háttérzenét!
-                if (chillAudio.paused) {
-                    chillAudio.play(); // Csak folytatjuk, nem újraindítjuk
-                }
+                // HÁTTÉRZENE KIKAPCSOLVA
+                // if (chillAudio.paused) {
+                //     chillAudio.play(); // Kikommentezve
+                // }
                 showPause();
             }
         });
@@ -624,7 +625,7 @@
         muteBtn.addEventListener('click', () => {
             isMuted = !isMuted;
             audio.muted = isMuted;
-            chillAudio.muted = isMuted;
+            // chillAudio.muted = isMuted; // HÁTTÉRZENE KIKAPCSOLVA
             if (isMuted) {
                 showMute();
             } else {
@@ -665,8 +666,8 @@
             replayControls.style.display = 'none';
             animation.goToAndStop(0, true);
             animation.play();
-            // Háttérzene biztonságos indítása
-            startChillSafely();
+            // HÁTTÉRZENE KIKAPCSOLVA - csak a fő narráció
+            // startChillSafely(); // Kikommentezve
             
             // Hang rögtön indul - tökéletes szinkron
             audio.play();
