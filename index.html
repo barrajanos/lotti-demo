@@ -545,7 +545,7 @@
 
         function syncAnimationToAudio() {
             if (audio.duration && !isNaN(audio.duration)) {
-                const offset = 1.5; // még nagyobb előrehozás
+                const offset = 0; // nincs előrehozás
                 let current = audio.currentTime + offset;
                 if (current > audio.duration) current = audio.duration;
                 let progress = current / audio.duration;
